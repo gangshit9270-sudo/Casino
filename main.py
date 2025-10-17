@@ -1,9 +1,9 @@
 from email import message_from_string
 
+import flask
 import telebot
 from pyexpat.errors import messages
-from telebot.types import ReplyKeyboardMarkup, ReplyKeyboardRemove
-import sqlite3
+from telebot.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from flask import Flask, request, jsonify
 import threading
 import re
@@ -29,13 +29,49 @@ def send_welcome(message):
 Выбери, с чего начнём 👇''', reply_markup=menu_markup())
 
 
-
 # === MARKUPS ==
+
+data = {}
+
 def menu_markup():
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
     markup.row('🎮 Перейти в мини-игры')
     markup.row('📞 Поддержка')
     return markup
+
+
+#=== Получение данных от пользователя ===
+@bot.message_handler(func=lambda m: m.text == '🎮 Перейти в мини-игры')
+def get_user_info(message):
+
+    userTelegramid = message.chat.id
+    userLogo = bot.get_user_profile_photos(userTelegramid)
+    usernameTelegram = message.from_user.username
+
+    if userLogo.total_count > 0:
+        file_id = userLogo.photos[0][-1].file_id
+        file_info = bot.get_file(file_id)
+        downloaded = bot.download_file(file_info.file_path)
+    else:
+        downloaded = None
+
+    data['username'] = usernameTelegram
+    data['telegram_id'] = userTelegramid
+    data['logo'] = downloaded
+
+    open_miniapp(message)
+
+# === Открытие mini app ===
+def open_miniapp(message):
+    url = ''
+
+    # создаём inline кнопку с mini app
+    markup = InlineKeyboardMarkup()
+    web_app = WebAppInfo(url=url)
+    button = InlineKeyboardButton('🎮 Играть', web_app=web_app)
+    markup.add(button)
+
+    bot.send_message(message.chat.id, 'Нажми, чтобы открыть mini app:', reply_markup=markup)
 
 
 
@@ -73,62 +109,10 @@ def back(message):
 
 
 # === API ЭНДПОИНТЫ ===
-app = Flask(__name__)
+app = flask.Flask(__name__)
 
 @app.route('/users', methods=['GET'])
-def get_all_users():
-    db = sqlite3.connect('usersDB.db')
-    cursor = db.cursor()
-    cursor.execute('SELECT telegram_id, player_id, username FROM users')
-    users = cursor.fetchall()
-    db.close()
-    return jsonify([
-        {'telegram_id': row[0], 'player_id': row[1], 'username': row[2]} for row in users
-    ])
 
-@app.route('/user/<int:telegram_id>', methods=['GET'])
-def get_user(telegram_id):
-    db = sqlite3.connect('usersDB.db')
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM users WHERE telegram_id = ?', (telegram_id,))
-    row = cursor.fetchone()
-    db.close()
-    if row:
-        return jsonify({
-            'id': row[0],
-            'telegram_id': row[1],
-            'player_id': row[2],
-            'username': row[3],
-            'password': row[4],
-            'pin': row[5]
-        })
-    else:
-        return jsonify({'error': 'User not found'}), 404
-
-@app.route('/user', methods=['POST'])
-def create_user():
-    data = request.json
-    db = sqlite3.connect('usersDB.db')
-    cursor = db.cursor()
-    cursor.execute('''
-        INSERT INTO users (telegram_id, player_id, username, password, pin)
-        VALUES (?, ?, ?, ?, ?)
-    ''', (
-        data['telegram_id'],
-        data['player_id'],
-        data['username'],
-        data['password'],
-        data['pin']
-    ))
-    db.commit()
-    db.close()
-    return jsonify({'message': 'User created successfully'}), 201
-
-# === ЗАПУСК БОТА И СЕРВЕРА ===
-def start_flask():
-    app.run(host='0.0.0.0', port=5000)
-
-threading.Thread(target=start_flask).start()
 
 
 bot.polling(non_stop=True)
