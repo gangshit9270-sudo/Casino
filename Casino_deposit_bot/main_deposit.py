@@ -27,7 +27,7 @@ def get_request(message):
     '''
 
 
-    bot.send_message(EXCHANGE_ID, deposit_request)
+    bot.send_message(EXCHANGE_ID, request_To_Exchange)
 
 
 bot.polling(non_stop=True)

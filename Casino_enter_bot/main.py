@@ -32,7 +32,7 @@ def menu_markup():
 # === Открытие mini app ===
 @bot.message_handler(func=lambda m: m.text == '🎮 Перейти в мини-игры')
 def open_miniapp(message):
-    url = 'https://example.com'
+    url = 'https://minibotaurore.vercel.app'
     markup = InlineKeyboardMarkup()
     web_app = WebAppInfo(url=url)
     button = InlineKeyboardButton('🎮 Играть', web_app=web_app)
