@@ -2,7 +2,7 @@ import telebot
 from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 
-telegram_API = '8444261511:AAGPMcQKIhJS5vixoDnOQnkaFGierK4gLRk'
+telegram_API = '8256169785:AAHGUtnf3PRbF1Sr8qO2sGE5o_sKM2IMnJE'
 ADMIN_ID = 1180361085
 
 bot = telebot.TeleBot(telegram_API)
@@ -32,7 +32,7 @@ def menu_markup():
 # === Открытие mini app ===
 @bot.message_handler(func=lambda m: m.text == '🎮 Перейти в мини-игры')
 def open_miniapp(message):
-    url = 'https://minibotaurore.vercel.app'
+    url = 'https://minibotaurore.vercel.app/'
     markup = InlineKeyboardMarkup()
     web_app = WebAppInfo(url=url)
     button = InlineKeyboardButton('🎮 Играть', web_app=web_app)
@@ -69,7 +69,7 @@ def support(message):
     markup = InlineKeyboardMarkup()
     button = InlineKeyboardButton(
         text='Написать в тех поддержку',
-        url='https://t.me/CasinoTestSupportbot'
+        url='https://t.me/luckyton77supportbot'
     )
     markup.add(button)
     bot.send_message(message.chat.id,'Нажмите чтобы перейти', reply_markup=markup)

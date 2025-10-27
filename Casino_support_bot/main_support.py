@@ -3,7 +3,7 @@ from AI_support.ai_support import ai_answer_support
 from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 import re
 
-BOT_API = '8370783217:AAG6iWembVf_FqHGikW_L3xwlnTvOwXX-KI'
+BOT_API = '8316773078:AAEiCvg_XML39HyQnOYNMJBfk1afeNoEOlI'
 SUPPORT_ID = 1180361085
 
 ai_answer = True
