@@ -2,7 +2,7 @@ import telebot
 from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 
-telegram_API = '8256169785:AAHGUtnf3PRbF1Sr8qO2sGE5o_sKM2IMnJE'
+telegram_API = '8311865673:AAFMPF8vWbfewiCoe78SFRFbvCE1LPfHax4'
 ADMIN_ID = 1180361085
 
 bot = telebot.TeleBot(telegram_API)

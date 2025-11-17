@@ -1,9 +1,9 @@
 import telebot
-from AI_support.ai_support import ai_answer_support
+from ai_support import ai_answer_support
 from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 import re
 
-BOT_API = '8316773078:AAEiCvg_XML39HyQnOYNMJBfk1afeNoEOlI'
+BOT_API = '7376902915:AAH6T6qHkSdT7rlZ7HZm2NYFjpz7Co3hvDo'
 SUPPORT_ID = 1180361085
 
 ai_answer = True
