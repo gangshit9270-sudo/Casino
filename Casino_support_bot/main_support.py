@@ -4,7 +4,7 @@ from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeybo
 import re
 
 BOT_API = '7376902915:AAH6T6qHkSdT7rlZ7HZm2NYFjpz7Co3hvDo'
-SUPPORT_ID = 1180361085
+SUPPORT_ID = 1180361084
 
 ai_answer = True
 active_chats = {}
@@ -131,9 +131,6 @@ def admin_reply(message):
     bot.send_message(SUPPORT_ID, "✅ Ответ отправлен пользователю.")
 
 
-
-
-
 @bot.message_handler(func=lambda m: m.chat.id != SUPPORT_ID)
 def user_message(message):
     user_id = message.chat.id
@@ -155,19 +152,31 @@ def user_message(message):
         else:
             bot.send_message(SUPPORT_ID, f"{caption}\n\n(Неизвестный тип сообщения)")
         bot.send_message(user_id, "✅ Ваше сообщение отправлено в поддержку. Ожидайте ответа!")
-        return  # Важно: прерываем обработку, чтобы ИИ не срабатывал
+        return
 
     # Если диалога нет — используем ИИ
+    if not message.text:
+        bot.send_message(user_id, "Пожалуйста, отправьте текстовое сообщение для получения помощи.")
+        return
+
     prompt = message.text
+
+    # Показываем, что бот печатает
+    bot.send_chat_action(user_id, 'typing')
+
     ai_response_data = ai_answer_support(prompt)
 
-    if "choices" in ai_response_data:
+    # Улучшенная обработка ответа
+    if "choices" in ai_response_data and len(ai_response_data["choices"]) > 0:
         answer = ai_response_data["choices"][0]["message"]["content"]
     elif "output" in ai_response_data:
         answer = ai_response_data["output"][0]["content"][0]["text"]
+    elif "error" in ai_response_data:
+        answer = f"⚠️ Произошла ошибка: {ai_response_data['error']}\n\nПопробуйте еще раз или используйте команду /admin для связи с поддержкой."
     else:
-        answer = "Извини, я не смог получить ответ от AI. Попробуй ещё раз."
+        answer = "Извините, не удалось получить ответ от AI. Попробуйте еще раз или используйте команду /admin для связи с поддержкой."
 
+    # Отправляем ответ пользователю
     bot.send_message(user_id, answer)
 
 
