@@ -1,9 +1,11 @@
 import telebot
 from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
-
-telegram_API = '8311865673:AAFMPF8vWbfewiCoe78SFRFbvCE1LPfHax4'
-ADMIN_ID = 1180361085
+telegram_API = os.getenv("TELEGRAM_BOT_API_MAIN")
+ADMIN_ID = os.getenv("ADMIN_ID_MAIN")
 
 bot = telebot.TeleBot(telegram_API)
 
@@ -32,7 +34,7 @@ def menu_markup():
 # === Открытие mini app ===
 @bot.message_handler(func=lambda m: m.text == '🎮 Перейти в мини-игры')
 def open_miniapp(message):
-    url = 'https://minibotaurore.vercel.app/'
+    url = os.getenv('MINI_APP_URL')
     markup = InlineKeyboardMarkup()
     web_app = WebAppInfo(url=url)
     button = InlineKeyboardButton('🎮 Играть', web_app=web_app)
@@ -69,7 +71,7 @@ def support(message):
     markup = InlineKeyboardMarkup()
     button = InlineKeyboardButton(
         text='Написать в тех поддержку',
-        url='https://t.me/luckyton77supportbot'
+        url=os.getenv('SUPPORT_BOT_URL')
     )
     markup.add(button)
     bot.send_message(message.chat.id,'Нажмите чтобы перейти', reply_markup=markup)

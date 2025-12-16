@@ -2,9 +2,12 @@ import telebot
 from ai_support import ai_answer_support
 from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 import re
+from dotenv import load_dotenv
+import  os
 
-BOT_API = '7376902915:AAH6T6qHkSdT7rlZ7HZm2NYFjpz7Co3hvDo'
-SUPPORT_ID = 1180361084
+load_dotenv()
+BOT_API = os.getenv("TELEGRAM_BOT_API_SUPPORT")
+SUPPORT_ID = os.getenv("SUPPORT_ID")
 
 ai_answer = True
 active_chats = {}
@@ -167,14 +170,18 @@ def user_message(message):
     ai_response_data = ai_answer_support(prompt)
 
     # Улучшенная обработка ответа
-    if "choices" in ai_response_data and len(ai_response_data["choices"]) > 0:
-        answer = ai_response_data["choices"][0]["message"]["content"]
-    elif "output" in ai_response_data:
-        answer = ai_response_data["output"][0]["content"][0]["text"]
+    if "answer" in ai_response_data:
+        answer = ai_response_data["answer"]
     elif "error" in ai_response_data:
-        answer = f"⚠️ Произошла ошибка: {ai_response_data['error']}\n\nПопробуйте еще раз или используйте команду /admin для связи с поддержкой."
+        answer = (
+            f"⚠️ Произошла ошибка: {ai_response_data['error']}\n\n"
+            "Попробуйте ещё раз или используйте команду /admin для связи с поддержкой."
+        )
     else:
-        answer = "Извините, не удалось получить ответ от AI. Попробуйте еще раз или используйте команду /admin для связи с поддержкой."
+        answer = (
+            "Извините, не удалось получить ответ от AI. "
+            "Попробуйте ещё раз или используйте команду /admin для связи с поддержкой."
+        )
 
     # Отправляем ответ пользователю
     bot.send_message(user_id, answer)

@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  enter_bot:
+    build: .
+    container_name: casino_enter_bot
+    restart: always
+    env_file: .env
+    command: python Casino/Casino_enter_bot/main.py
+
+  support_bot:
+    build: .
+    container_name: casino_support_bot
+    restart: always
+    env_file: .env
+    command: python Casino/Casino_support_bot/main_support.py
